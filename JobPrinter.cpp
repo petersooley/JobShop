@@ -14,11 +14,11 @@ OpNode::OpNode(const int j, const int s, const int d, const int m) {
 }
 
 
-JobPrinter::JobPrinter() : head(NULL){
+JobPrinter::JobPrinter() : head(NULL), lastSec(0){
 
 }
 
-JobPrinter::JobPrinter(string input, string output) : head(NULL) {
+JobPrinter::JobPrinter(string input, string output) : head(NULL), lastSec(0) {
 	ifstream inf(input.c_str());
 	ifstream outf(output.c_str());
 	if(inf.fail()) {
@@ -75,7 +75,7 @@ JobPrinter::~JobPrinter() {
  * run at the same time and they aren't on the same machine, then sort them by machine.
  */
 int JobPrinter::addOperation(const int job, const int start, const int duration, const int machine) {
-
+	int dur = 0;
 	OpNode * data = new OpNode(job, start, duration, machine);
 
 	if(!head) {
@@ -93,7 +93,8 @@ int JobPrinter::addOperation(const int job, const int start, const int duration,
 	if(mystart >= start) {
 		data->next = head;
 		head = data;
-		lastSec = start + duration;
+		dur = start + duration;
+		lastSec = lastSec > dur ? lastSec : dur;
 		return 1;
 	}
 
@@ -131,14 +132,16 @@ int JobPrinter::addOperation(const int job, const int start, const int duration,
 
 	previous->next = data;
 	data->next = NULL;
-	lastSec = start + duration;
+	dur = start + duration;
+	lastSec = lastSec > dur ? lastSec : dur;
 
 	return 1;
 }
 
 void JobPrinter::print() {
 
-	// print header
+	// print headers
+	cout << pad(" ") << pad(" machines") << endl;
 	cout << pad("time");
 	for(int i = 0; i < nummachs; ++i)
 		cout << pad(i);
@@ -146,7 +149,7 @@ void JobPrinter::print() {
 
 	// print lines
 	for(int j = 0; j <= nummachs; ++j)
-		cout << pad("--------");
+		cout << pad("-----");
 	cout << endl;
 
 	// print each line of data
@@ -154,14 +157,13 @@ void JobPrinter::print() {
 
 	for(int k = 0; k < lastSec; ++k) {
 
-		OpNode * current = head;
-
 		// print the current time unit
 		cout << pad(k);
 
 		// for each machine, come up with a job (if any) that's working
 		// on it at the current time.
 		for(int l = 0; l < nummachs; ++l) {
+			OpNode * current = head;
 			jobfound = 0;
 			while(current) {
 				if(current->machine == l &&
@@ -176,21 +178,22 @@ void JobPrinter::print() {
 				current = current->next;
 			}
 			if(!jobfound)
-				cout << pad(" ");
+				cout << pad("*");
 		}
 		cout << endl;
 	}
+
 }
 
 string JobPrinter::pad(const int num) {
 	char word[200];
-	sprintf(word, "%6d",num);
+	sprintf(word, "%5d",num);
 	return word;
 }
 
 string JobPrinter::pad(const char* s) {
 	char word[200];
-	sprintf(word, "%6s",s);
+	sprintf(word, "%5s",s);
 	return word;
 }
 
