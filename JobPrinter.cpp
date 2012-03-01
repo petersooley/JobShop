@@ -138,52 +138,59 @@ int JobPrinter::addOperation(const int job, const int start, const int duration,
 
 void JobPrinter::print() {
 
-
+	// print header
+	cout << pad("time");
 	for(int i = 0; i < nummachs; ++i)
 		cout << pad(i);
 	cout << endl;
 
-	cout << "  ";
-	for(int j = 0; j < nummachs; ++j)
-		cout << pad("-----");
+	// print lines
+	for(int j = 0; j <= nummachs; ++j)
+		cout << pad("--------");
 	cout << endl;
 
-	OpNode * current = head;
-	for(int k = 0; k < 5; ++k) {
-		cout << pad(" ");
+	// print each line of data
+	int jobfound = 0;
+
+	for(int k = 0; k < lastSec; ++k) {
+
+		OpNode * current = head;
+
+		// print the current time unit
+		cout << pad(k);
+
+		// for each machine, come up with a job (if any) that's working
+		// on it at the current time.
 		for(int l = 0; l < nummachs; ++l) {
-			if(current->machine == l) {
-				cout << pad(current->job);
-				current= current->next;
+			jobfound = 0;
+			while(current) {
+				if(current->machine == l &&
+					current->start == k &&
+					current->duration != 0) {
+					cout << pad(current->job);
+					jobfound = 1;
+					++current->start;
+					--current->duration;
+					break;
+				}
+				current = current->next;
 			}
-			else {
+			if(!jobfound)
 				cout << pad(" ");
-			}
-			cout << endl;
 		}
+		cout << endl;
 	}
-
-
-	OpNode * cur = head;
-	while(cur) {
-		cout << "Job " << cur->job
-			<< ", machine "<< cur->machine
-			<< ", start " << cur->start <<endl;
-		cur = cur->next;
-	}
-
-
 }
 
 string JobPrinter::pad(const int num) {
 	char word[200];
-	sprintf(word, "%8d",num);
+	sprintf(word, "%6d",num);
 	return word;
 }
 
 string JobPrinter::pad(const char* s) {
 	char word[200];
-	sprintf(word, "%8s",s);
+	sprintf(word, "%6s",s);
 	return word;
 }
 
