@@ -1,15 +1,30 @@
 CC = g++
 CFLAGS = -g -Wall -c
 
-OBJS = JobPrinter.o
-
-JobPrinter: $(OBJS)
-	$(CC) -o JobPrinter $(OBJS)
+# JobPrinter...
+JobPrinter: JobPrinter.o
+	$(CC) -o JobPrinter JobPrinter.o
 
 JobPrinter.o: JobPrinter.cpp
 	$(CC) $(CFLAGS) JobPrinter.cpp JobPrinter.h
 
-all: JobPrinter
+# JobScheduler...
+OBJS = Job.o Machine.o JobScheduler.o
+
+JobScheduler: $(OBJS)
+	$(CC) -o JobScheduler $(OBJS)
+
+JobScheduler.o: JobScheduler.cpp
+	$(CC) $(CFLAGS) JobScheduler.cpp JobScheduler.h
+
+Job.o: Job.cpp
+	$(CC) $(CFLAGS) Job.cpp Job.h
+
+Machine.o: Machine.cpp
+	$(CC) $(CFLAGS) Machine.cpp Machine.h
+
+
+all: JobPrinter JobScheduler
 
 clean:
-	rm -f JobPrinter *.o *.gch
+	rm -f JobScheduler JobPrinter *.o *.gch

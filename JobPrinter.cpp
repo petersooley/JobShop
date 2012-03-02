@@ -139,18 +139,19 @@ int JobPrinter::addOperation(const int job, const int start, const int duration,
 }
 
 void JobPrinter::print() {
+	ostringstream out;
 
 	// print headers
-	cout << pad(" ") << pad(" machines") << endl;
-	cout << pad("time");
+	out << pad(" ") << pad(" machines") << endl;
+	out << pad("time");
 	for(int i = 0; i < nummachs; ++i)
-		cout << pad(i);
-	cout << endl;
+		out << pad(i);
+	out << endl;
 
 	// print lines
 	for(int j = 0; j <= nummachs; ++j)
-		cout << pad("-----");
-	cout << endl;
+		out << pad("-----");
+	out << endl;
 
 	// print each line of data
 	int jobfound = 0;
@@ -158,7 +159,7 @@ void JobPrinter::print() {
 	for(int k = 0; k < lastSec; ++k) {
 
 		// print the current time unit
-		cout << pad(k);
+		out << pad(k);
 
 		// for each machine, come up with a job (if any) that's working
 		// on it at the current time.
@@ -169,7 +170,7 @@ void JobPrinter::print() {
 				if(current->machine == l &&
 					current->start == k &&
 					current->duration != 0) {
-					cout << pad(current->job);
+					out << pad(current->job);
 					jobfound = 1;
 					++current->start;
 					--current->duration;
@@ -178,11 +179,23 @@ void JobPrinter::print() {
 				current = current->next;
 			}
 			if(!jobfound)
-				cout << pad("*");
+				out << pad("*");
 		}
-		cout << endl;
+		out << endl;
 	}
 
+	OpNode * current = head;
+	while(current) {
+		if(current->duration) {
+			cout << "Incorrect solution. Job "<<current->job<<" could not start at time "
+					<< current->start <<", because another job was still on machine "
+					<<current->machine<<".\n";
+			return;
+		}
+		current = current->next;
+	}
+
+	cout << out.str();
 }
 
 string JobPrinter::pad(const int num) {
