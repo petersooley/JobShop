@@ -8,12 +8,11 @@ using namespace std;
 class JobScheduler {
 	public:
 		JobScheduler();
-		JobScheduler(string input, string output);
+		JobScheduler(string input);
 		~JobScheduler();
 
-		void printSolution();
+		void printSolution(string output);
 	private:
-		string output;
 		int numJobs;
 		int numMachs;
 		Job * jobs;

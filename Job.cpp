@@ -48,7 +48,7 @@ int Job::isFinished() {
 void Job::printSolution() {
 	char word[20];
 	for(int i = 0; i < size; ++i) {
-		sprintf(word, "%4d%4d", ops->machine, ops->start);
+		sprintf(word, "%-3d %-4d", ops[i].machine,ops[i].start);
 		cout << word;
 	}
 	cout << endl;

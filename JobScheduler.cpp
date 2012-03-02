@@ -10,8 +10,7 @@ JobScheduler::JobScheduler() {
 
 }
 
-JobScheduler::JobScheduler(string in, string out):jobs(NULL) {
-	output = out;
+JobScheduler::JobScheduler(string in):jobs(NULL) {
 
 	ifstream inf(in.c_str());
 	if(inf.fail()) {
@@ -22,6 +21,9 @@ JobScheduler::JobScheduler(string in, string out):jobs(NULL) {
 	inf >> numMachs;
 
 	jobs = new Job[numJobs];
+
+	for(int i = 0; i < numJobs; ++i)
+		jobs[i].set(i,numMachs);
 
 	int machine;
 	int duration;
@@ -43,7 +45,10 @@ JobScheduler::~JobScheduler() {
 	delete [] jobs;
 }
 
-void JobScheduler::printSolution() {
+void JobScheduler::printSolution(string output) {
+
+	// eventually we'll print this into the actual output file
+
 	for(int i = 0; i < numJobs; ++i) {
 		jobs[i].printSolution();
 	}
@@ -55,8 +60,8 @@ int main(int argc, char*argv[]) {
 		exit(1);
 	}
 
-	JobScheduler js(argv[1], argv[2]);
-	js.printSolution();
+	JobScheduler js(argv[1]);
+	js.printSolution(argv[2]);
 
 	return 0;
 }
