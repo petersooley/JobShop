@@ -28,7 +28,7 @@ int Job::addOp(int m, int d){
 	return 0;
 }
 
-Operation * Job::current() {
+Operation * Job::getCurrent() {
 	return &ops[curOp];
 }
 

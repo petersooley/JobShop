@@ -21,7 +21,7 @@ class Job {
 		int addOp(int machine, int duration);
 
 		// Get a reference to the current operation in the list
-		Operation * current();
+		Operation * getCurrent();
 
 		// Move on to the next operation, so that current() returns
 		// a new operation.

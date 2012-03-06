@@ -56,7 +56,7 @@ void JobScheduler::printSolution(string output) {
 
 int main(int argc, char*argv[]) {
 	if(argc != 3) {
-		cout << "Usage: ./JobPrinter <input_file> <output_file>\n";
+		cout << "Usage: ./JobScheduler <input_file> <output_file>\n";
 		exit(1);
 	}
 
