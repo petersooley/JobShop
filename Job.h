@@ -21,12 +21,13 @@ class Job {
 		int addOp(int machine, int duration);
 
 		// Get a reference to the current operation in the list
-		Operation * getCurrent();
+		Operation * getReady();
 
 		// Move on to the next operation, so that current() returns
 		// a new operation.
 		// -1 if you can't move on anymore
-		int moveOn();
+		int moveForward();
+		void moveBackward();
 
 		// 1 if finished, 0 if not
 		int isFinished();

@@ -3,6 +3,7 @@
 
 #include <string>
 #include "Job.h"
+#include "Machine.h"
 using namespace std;
 
 class JobScheduler {
@@ -12,10 +13,13 @@ class JobScheduler {
 		~JobScheduler();
 
 		void printSolution(string output);
+		int findSchedule();
 	private:
 		int numJobs;
 		int numMachs;
 		Job * jobs;
+		Machine * machines;
+		int schedule();
 };
 
 #endif

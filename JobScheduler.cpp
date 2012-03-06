@@ -3,7 +3,6 @@
 #include <iostream>
 #include <stdlib.h>
 #include <fstream>
-#include "Job.h"
 using namespace std;
 
 JobScheduler::JobScheduler() {
@@ -21,6 +20,7 @@ JobScheduler::JobScheduler(string in):jobs(NULL) {
 	inf >> numMachs;
 
 	jobs = new Job[numJobs];
+	machines = new Machine[numMachs];
 
 	for(int i = 0; i < numJobs; ++i)
 		jobs[i].set(i,numMachs);
@@ -43,6 +43,7 @@ JobScheduler::JobScheduler(string in):jobs(NULL) {
 
 JobScheduler::~JobScheduler() {
 	delete [] jobs;
+	delete [] machines;
 }
 
 void JobScheduler::printSolution(string output) {
@@ -54,6 +55,53 @@ void JobScheduler::printSolution(string output) {
 	}
 }
 
+int JobScheduler::findSchedule() {
+	return schedule();
+}
+
+int JobScheduler::schedule() {
+	// See if there are still operations available
+	int stillHaveOps = 0;
+	for(int a = 0; a < numJobs; ++a) {
+		if(!jobs[a].isFinished()) {
+			stillHaveOps = 1;
+			break;
+		}
+	}
+	// If we're done, return the score. The machine with the
+	// longest duration of ops running on it.
+	if(!stillHaveOps) {
+		int score = 0;
+		int current;
+		for(int b = 0; b < numMachs; ++b) {
+			current = machines[b].score();
+			score = current > score ? current : score;
+		}
+		return score;
+	}
+	
+	// Get a list of the operations that are ready to be
+	// scheduled.
+	Operation ** ready = new Operation*[numJobs];
+	for(int c = 0; c < numJobs; ++c)
+		ready[c] = jobs[c].getReady();
+
+	// Assign an operation to each machine 
+	for(int d = 0; d < numMachs; ++d) {
+		for(int e = 0; e < numJobs; ++e) {
+			// skip jobs that are finished and operations
+			// that don't need to run on this machine
+			if(ready[e] == NULL || ready[e]->machine != d)
+				continue;
+			
+			
+		}
+	}
+
+	delete [] ready;
+	return 0;
+}
+
 int main(int argc, char*argv[]) {
 	if(argc != 3) {
 		cout << "Usage: ./JobScheduler <input_file> <output_file>\n";
@@ -61,6 +109,8 @@ int main(int argc, char*argv[]) {
 	}
 
 	JobScheduler js(argv[1]);
+	int score = 0;
+	score = js.findSchedule();
 	js.printSolution(argv[2]);
 
 	return 0;

@@ -8,6 +8,9 @@ class Machine {
 		Machine();
 		~Machine();
 		void addOp(Operation * op);
+		void removeOp(Operation * op);
+		// time until completion of all assigned operations
+		int score();
 	private:
 		int nextStart;
 };

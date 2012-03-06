@@ -28,15 +28,22 @@ int Job::addOp(int m, int d){
 	return 0;
 }
 
-Operation * Job::getCurrent() {
+Operation * Job::getReady() {
+	if(curOp >= opCount)
+		return NULL;
 	return &ops[curOp];
 }
 
-int Job::moveOn() {
+int Job::moveForward() {
 	if(curOp >= size)
 		return -1;
 	++curOp;
 	return 0;
+}
+void Job::moveBackward() {
+	--curOp;
+	if(curOp < 0)
+		curOp = 0;
 }
 
 int Job::isFinished() {
