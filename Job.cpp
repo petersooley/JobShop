@@ -28,7 +28,7 @@ int Job::addOp(int m, int d){
 	return 0;
 }
 
-Operation * Job::getReady() {
+Operation * Job::getReadyOp() {
 	if(curOp >= opCount)
 		return NULL;
 	return &ops[curOp];

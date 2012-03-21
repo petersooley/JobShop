@@ -80,25 +80,7 @@ int JobScheduler::schedule() {
 		return score;
 	}
 	
-	// Get a list of the operations that are ready to be
-	// scheduled.
-	Operation ** ready = new Operation*[numJobs];
-	for(int c = 0; c < numJobs; ++c)
-		ready[c] = jobs[c].getReady();
 
-	// Assign an operation to each machine 
-	for(int d = 0; d < numMachs; ++d) {
-		for(int e = 0; e < numJobs; ++e) {
-			// skip jobs that are finished and operations
-			// that don't need to run on this machine
-			if(ready[e] == NULL || ready[e]->machine != d)
-				continue;
-			
-			
-		}
-	}
-
-	delete [] ready;
 	return 0;
 }
 
