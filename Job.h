@@ -1,6 +1,9 @@
 #ifndef JOB_H_
 #define JOB_H_
 
+#include <string>
+using namespace std;
+
 struct Operation {
 	int job;
 	int machine;
@@ -20,25 +23,29 @@ class Job {
 		// -1 if ops array is full
 		int addOp(int machine, int duration);
 
-		// Get a reference to the current operation in the list
-		Operation * getReadyOp();
-
-		// Move on to the next operation, so that current() returns
-		// a new operation.
+		// Schedule the current op to start at nextStart
+		// and then move curOp forward.
 		// -1 if you can't move on anymore
-		int moveForward();
-		void moveBackward();
+		int scheduleCurOp(int machineNextStart);
+		void unschedulePrevOp();
 
 		// 1 if finished, 0 if not
 		int isFinished();
 
 		void printSolution();
+		string getSolution();
+
+		int getCurOpDuration();
+		int getCurOpMachine();
+		int getNextStart();
+
 
 	private:
 		int id;
 		int size;
 		int opCount;
 		int curOp;
+		int nextStart;
 		Operation * ops;
 };
 

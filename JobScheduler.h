@@ -13,13 +13,22 @@ class JobScheduler {
 		~JobScheduler();
 
 		void printSolution(string output);
-		int findSchedule();
+		int doSchedule();
 	private:
 		int numJobs;
 		int numMachs;
+		int bestScore;
+		int numOps;
+		int opCount;
+		int currentScore;
+		string solution;
+		static const int MAX = 10000;
+		// An array of jobs
 		Job * jobs;
-		Machine * machines;
+		// An array to keep track of each
+		int * machines;
 		int schedule();
+		void saveState();
 };
 
 #endif
