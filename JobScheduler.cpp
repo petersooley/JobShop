@@ -10,7 +10,7 @@ JobScheduler::JobScheduler() {
 
 }
 
-JobScheduler::JobScheduler(string in):bestScore(MAX),currentScore(0),jobs(NULL),machines(NULL){
+JobScheduler::JobScheduler(string in):bestScore(MAX),currentScore(0),bestIdleTime(MAX),currentIdleTime(0),jobs(NULL),machines(NULL){
 
 	ifstream inf(in.c_str());
 	if(inf.fail()) {
@@ -49,17 +49,13 @@ JobScheduler::~JobScheduler() {
 }
 
 void JobScheduler::printSolution(string output) {
-
-	// eventually we'll print this into the actual output file
+	ofstream outf(output.c_str());
+	outf << solution << endl;
+	outf << "Score: " << bestScore << endl;
+	outf.close();
 
 	cout << solution << endl;
 	cout << "Score: " << bestScore << endl;
-}
-
-int JobScheduler::doSchedule() {
-
-	schedule();
-	return bestScore;
 }
 
 int JobScheduler::schedule() {
@@ -68,6 +64,9 @@ int JobScheduler::schedule() {
 	if(opCount == 0)
 		return currentScore - 1;
 	
+	int failFlag = 0;
+	int score;
+
 	for(int c = 0; c < numJobs; ++c) {
 		if(jobs[c].isFinished())
 			continue;
@@ -86,22 +85,42 @@ int JobScheduler::schedule() {
 		if(machines[curOpMachine] > currentScore) {
 			currentScore = machines[curOpMachine];
 		}
+		int oldCurrentIdleTime = currentIdleTime;
+		if(jobNextStart > machineNextStart)
+			currentIdleTime += jobNextStart - machineNextStart;
 
-		int score = schedule();
+		// Optimization #1
+		if(bestScore != 1 && currentScore > bestScore){
+			failFlag = 1;
+			goto UNDO;
+		}
+
+		// Optimization #2
+		if(currentIdleTime > bestIdleTime) {
+			failFlag = 1;
+			goto UNDO;
+		}
+
+		score = schedule();
 		if(score != -1 && score < bestScore) {
 			bestScore = score;
+			bestIdleTime = currentIdleTime;
 			saveState();
 		}
 
 
-		// UNDO
+UNDO:
 		jobs[c].unschedulePrevOp();
 		machines[curOpMachine] = machineNextStart;
 		currentScore = oldCurrentScore;
+		currentIdleTime = oldCurrentIdleTime;
 		++opCount;
+
+		if(failFlag)
+			break;
 	}
 
-	return bestScore;
+	return failFlag ? -1 : bestScore;
 }
 
 void JobScheduler::saveState() {
@@ -118,9 +137,20 @@ int main(int argc, char*argv[]) {
 	}
 
 	JobScheduler js(argv[1]);
-	js.doSchedule();
+	js.schedule();
 	js.printSolution(argv[2]);
 
 
 	return 0;
 }
+
+//		cout << "job[" << c << "]\n";
+//		cout << "     m : " << curOpMachine << endl;
+//		cout << "   jNS : " << jobNextStart << endl;
+//		cout << "   mNS : " << machineNextStart << endl;
+//		cout << "   dur : " << curOpDuration << endl;
+//		cout << "   opS : " << opStart << endl;
+//		cout << "  idle : " << currentIdleTime << endl;
+//		cout << " bidle : " << bestIdleTime << endl;
+//		cout << "   sco : " << currentScore << endl;
+//		cout << "  bSco : " << bestScore << endl;

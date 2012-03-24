@@ -13,7 +13,7 @@ class JobScheduler {
 		~JobScheduler();
 
 		void printSolution(string output);
-		int doSchedule();
+		int schedule();
 	private:
 		int numJobs;
 		int numMachs;
@@ -21,13 +21,14 @@ class JobScheduler {
 		int numOps;
 		int opCount;
 		int currentScore;
+		int bestIdleTime;
+		int currentIdleTime;
 		string solution;
-		static const int MAX = 10000;
+		static const int MAX = 1000000;
 		// An array of jobs
 		Job * jobs;
 		// An array to keep track of each
 		int * machines;
-		int schedule();
 		void saveState();
 };
 
